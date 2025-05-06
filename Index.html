@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Alunos</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet">
+
+</head>
+<body>
+
+    <img src="assets/disco.png" class="corner-image top-right" alt="decorativo">
+<img src="assets/disco.png" class="corner-image bottom-left" alt="decorativo">
+    <div class="container">
+        <img src="assets/close.png" alt="Adicionar" class="add-icon">
+        <img src="assets/icon.png" alt="Decoração" class="corner-left-icon">
+    
+        <h1>Cadastro de Alunos</h1>
+        
+        <form id="formAluno">
+            <div class="form-group">
+                <label for="nome">Nome:</label>
+                <input type="text" id="nome" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="idade">Idade:</label>
+                <input type="number" id="idade" min="12" max="99" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="curso">Curso:</label>
+                <input type="text" id="curso" required>
+            </div>
+            
+            <button type="submit">Cadastrar Aluno</button>
+        </form>
+        
+        <div class="display-options">
+            <button id="btnVisualizarLista">Visualizar como Lista</button>
+            <button id="btnVisualizarJSON">Visualizar como JSON</button>
+            <button id="btnExportarJSON">Exportar JSON</button>
+        </div>
+        
+        <h2>Lista de Alunos Cadastrados</h2>
+        <div id="listaAlunos"></div>
+        <pre id="jsonAlunos" class="hidden"></pre>
+    </div>
+
+    <script src="script.js">
+        const alunos = [];
+        let indiceEdicao = null; // Controla se estamos editando (null = não)
+      
+        function criarAluno(nome, idade, curso) {
+          return { nome, idade, curso };
+        }
+      
+        function adicionarOuEditarAluno(event) {
+          event.preventDefault();
+      
+          const nome = document.getElementById("nome").value;
+          const idade = parseInt(document.getElementById("idade").value);
+          const curso = document.getElementById("curso").value;
+      
+          const alunoAtualizado = criarAluno(nome, idade, curso);
+      
+          if (indiceEdicao !== null) {
+            alunos[indiceEdicao] = alunoAtualizado;
+            indiceEdicao = null;
+            document.querySelector("button[type='submit']").textContent = "Cadastrar Aluno";
+          } else {
+            alunos.push(alunoAtualizado);
+          }
+      
+          atualizarListaAlunos();
+          atualizarJSON();
+          document.getElementById("formAluno").reset();
+        }
+      
+        function editarAluno(index) {
+          const aluno = alunos[index];
+          document.getElementById("nome").value = aluno.nome;
+          document.getElementById("idade").value = aluno.idade;
+          document.getElementById("curso").value = aluno.curso;
+          indiceEdicao = index;
+          document.querySelector("button[type='submit']").textContent = "Salvar Alterações";
+        }
+      
+        function atualizarListaAlunos() {
+          const listaAlunos = document.getElementById("listaAlunos");
+      
+          if (alunos.length === 0) {
+            listaAlunos.innerHTML = "<p>Nenhum aluno cadastrado ainda.</p>";
+            return;
+          }
+      
+          let html = "";
+          alunos.forEach((aluno, index) => {
+            html += `
+              <div class="aluno-card">
+                <p><strong>Nome:</strong> ${aluno.nome}</p>
+                <p><strong>Idade:</strong> ${aluno.idade}</p>
+                <p><strong>Curso:</strong> ${aluno.curso}</p>
+                <button onclick="editarAluno(${index})">Editar</button>
+              </div>
+            `;
+          });
+      
+          listaAlunos.innerHTML = html;
+        }
+      
+        function atualizarJSON() {
+          const jsonOutput = document.getElementById("jsonOutput");
+          jsonOutput.textContent = JSON.stringify(alunos, null, 2);
+        }
+      
+        function exportarJSON() {
+          const dados = JSON.stringify(alunos, null, 2);
+          const blob = new Blob([dados], { type: "application/json" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "alunos.json";
+          a.click();
+          URL.revokeObjectURL(url);
+        }
+      
+        document.getElementById("formAluno").addEventListener("submit", adicionarOuEditarAluno);
+        atualizarListaAlunos();
+        atualizarJSON();
+      </script>
+      
+</body>
+</html>
