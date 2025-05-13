@@ -1,14 +1,12 @@
-// Array para armazenar os alunos
 const alunos = [];
 
-// Elementos do DOM
 const listaAlunos = document.getElementById('listaAlunos');
 const jsonAlunos = document.getElementById('jsonAlunos');
 const btnVisualizarLista = document.getElementById('btnVisualizarLista');
 const btnVisualizarJSON = document.getElementById('btnVisualizarJSON');
 const btnExportarJSON = document.getElementById('btnExportarJSON');
 
-// Função para criar um objeto Aluno
+
 function criarAluno(nome, idade, curso) {
     return {
         nome: nome,
@@ -18,41 +16,35 @@ function criarAluno(nome, idade, curso) {
     };
 }
 
-// Função para adicionar aluno ao array e atualizar a lista
+
 function adicionarAluno(event) {
     event.preventDefault();
     
-    // Obter valores do formulário
+   
     const nome = document.getElementById('nome').value;
     const idade = parseInt(document.getElementById('idade').value);
     const curso = document.getElementById('curso').value;
     
-    // Criar objeto aluno
+  
     const novoAluno = criarAluno(nome, idade, curso);
     
-    // Adicionar ao array
+
     alunos.push(novoAluno);
     
-    // Atualizar a exibição
     if (!jsonAlunos.classList.contains('hidden')) {
         atualizarJSONAlunos();
     } else {
         atualizarListaAlunos();
     }
     
-    // Limpar o formulário
     document.getElementById('formAluno').reset();
 }
-
-// Função para atualizar a lista de alunos no HTML
 function atualizarListaAlunos() {
     // Verificar se há alunos cadastrados
     if (alunos.length === 0) {
         listaAlunos.innerHTML = '<p>Nenhum aluno cadastrado ainda.</p>';
         return;
     }
-    
-    // Criar HTML para cada aluno
     let html = '';
     alunos.forEach(aluno => {
         html += `
@@ -65,16 +57,13 @@ function atualizarListaAlunos() {
         `;
     });
     
-    // Inserir no DOM
     listaAlunos.innerHTML = html;
 }
 
-// Função para atualizar a visualização JSON
 function atualizarJSONAlunos() {
     jsonAlunos.textContent = JSON.stringify(alunos, null, 2);
 }
 
-// Função para exportar JSON
 function exportarJSON() {
     const dataStr = JSON.stringify(alunos, null, 2);
     const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
@@ -87,7 +76,6 @@ function exportarJSON() {
     linkElement.click();
 }
 
-// Event Listeners
 document.getElementById('formAluno').addEventListener('submit', adicionarAluno);
 btnVisualizarLista.addEventListener('click', () => {
     listaAlunos.classList.remove('hidden');
@@ -100,7 +88,5 @@ btnVisualizarJSON.addEventListener('click', () => {
     atualizarJSONAlunos();
 });
 btnExportarJSON.addEventListener('click', exportarJSON);
-
-// Inicializar a lista
 atualizarListaAlunos();
 jsonAlunos.classList.add('hidden');
